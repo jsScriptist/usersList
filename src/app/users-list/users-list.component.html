@@ -1,16 +1,62 @@
-<mat-selection-list #users>
-  <mat-list-option
-    *ngFor="let user of usersList; let i = index"
-    [ngClass]="{'gray': i%2 }"
-  >
+<div class="sort">
+  <mat-form-field appearance="outline">
+    <mat-label>Sort the users</mat-label>
+    <mat-select  #list (selectionChange)="sortList(list.value)">
+      <mat-option  value="0">from A to Z</mat-option>
+        <mat-option value="1">from Z to A</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Search</mat-label>
+    <input matInput placeholder="Find users" #query (keyup.enter)="search(query.value)">
+    <mat-icon matSuffix (click)="search(query.value)">search</mat-icon>
+  </mat-form-field>
+</div>
+<div class="sort">
+  <mat-form-field class="item-field" appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matInput placeholder="Username" [(ngModel)]="username">
+    </mat-form-field>
+    <mat-form-field class="item-field" appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="User" [(ngModel)]="user">
+    </mat-form-field>
+  <mat-form-field class="item-field" appearance="outline">
+    <mat-label>User role</mat-label>
+    <mat-select [(ngModel)]="role">
+      <mat-option  value="Admin">Admin</mat-option>
+      <mat-option value="User">User</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="addUser()">Add</button>
+</div>
+<div *ngIf="usersList.length > 0; else empty">
+  <mat-selection-list #users (selectionChange)="selectUsers(users.selectedOptions.selected)">
+    <mat-list-option
+      [value]="user"
+      *ngFor="let user of usersList; let i = index"
+      [ngClass]="{'gray': i%2 }"
+    >
+      <div>
+        <span class="item">{{user.username}}</span>
+        <span class="item">{{user.name}}</span>
+        <span class="item" *ngIf="user.role === 'Admin'">{{user.role}}</span>
+      </div>
+    </mat-list-option>
+  </mat-selection-list>
+  <div class="item">
     <div>
-      <span class="item">{{user.username}}</span>
-      <span class="item">{{user.name}}</span>
-      <span class="item" *ngIf="user.role === 'Admin'">{{user.role}}</span>
+      <p>
+        Users selected: {{users.selectedOptions.selected.length}}
+      </p>
     </div>
-  </mat-list-option>
-</mat-selection-list>
+    <div>
+      <button mat-raised-button color="warn" (click)="deleteUsers()">Delete</button>
+    </div>
+  </div>
+</div>
 
-<p>
-  Options selected: {{users.selectedOptions.selected.length}}
-</p>
+<ng-template #empty>
+  <h1>This users list is empty!</h1>
+</ng-template>
+
